@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/Blog/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/Blog/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/Blog/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.cat.net/css?family=Roboto Slab:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Lobster Two:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/Blog/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/Blog/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/Blog/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/Blog/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/Blog/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/Blog/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Python," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Abstract本文将从三个问题来阐述Python Descriptor：  什么是Descriptor？ Descriptor如何被调用？ Non Data Descriptor 与 Data Descriptor有何区别？  在回答完这三个问题之后，本文还将列举几个使用Descriptor的例子：  @Property原理  基于Property实现@cached_property  Pyt">
+<meta name="keywords" content="Python">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python描述器协议">
+<meta property="og:url" content="https://zifenghuang1.github.io/Blog/2018/03/02/Python描述器协议/index.html">
+<meta property="og:site_name" content="CrazyLeaves">
+<meta property="og:description" content="Abstract本文将从三个问题来阐述Python Descriptor：  什么是Descriptor？ Descriptor如何被调用？ Non Data Descriptor 与 Data Descriptor有何区别？  在回答完这三个问题之后，本文还将列举几个使用Descriptor的例子：  @Property原理  基于Property实现@cached_property  Pyt">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://zifenghuang1.github.io/Blog/2018/03/02/Python描述器协议/67527380_p0.jpg">
+<meta property="og:updated_time" content="2018-03-02T15:38:42.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Python描述器协议">
+<meta name="twitter:description" content="Abstract本文将从三个问题来阐述Python Descriptor：  什么是Descriptor？ Descriptor如何被调用？ Non Data Descriptor 与 Data Descriptor有何区别？  在回答完这三个问题之后，本文还将列举几个使用Descriptor的例子：  @Property原理  基于Property实现@cached_property  Pyt">
+<meta name="twitter:image" content="https://zifenghuang1.github.io/Blog/2018/03/02/Python描述器协议/67527380_p0.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/Blog/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"right","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":true},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://zifenghuang1.github.io/Blog/2018/03/02/Python描述器协议/"/>
+
+
+
+
+
+  <title>Python描述器协议 | CrazyLeaves</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?028a314c0922416bd46027adc38f64f9";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/Blog/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">CrazyLeaves</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description"></h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/Blog/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/Blog/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/Blog/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/Blog/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/Blog/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://zifenghuang1.github.io/Blog/Blog/2018/03/02/Python描述器协议/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="CrazyLeaves">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/Blog/images/avatar.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyLeaves">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">Python描述器协议</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-02T23:29:10+08:00">
+                2018-03-02
+              </time>
+            
+
+            
+              <span class="post-meta-divider">|</span>
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-check-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">更新于&#58;</span>
+              
+              <time title="更新于" itemprop="dateModified" datetime="2018-03-02T23:38:42+08:00">
+                2018-03-02
+              </time>
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/Blog/categories/Python/" itemprop="url" rel="index">
+                    <span itemprop="name">Python</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/Blog/2018/03/02/Python描述器协议/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2018/03/02/Python描述器协议/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/Blog/2018/03/02/Python描述器协议/" class="leancloud_visitors" data-flag-title="Python描述器协议">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  2,475
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  12
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <img src="/Blog/2018/03/02/Python描述器协议/67527380_p0.jpg" title="Descriptor">
+<h3 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h3><p>本文将从三个问题来阐述Python Descriptor：</p>
+<ol>
+<li>什么是Descriptor？</li>
+<li>Descriptor如何被调用？</li>
+<li>Non Data Descriptor 与 Data Descriptor有何区别？</li>
+</ol>
+<p>在回答完这三个问题之后，本文还将列举几个使用Descriptor的例子：</p>
+<ol>
+<li><p>@Property原理</p>
+</li>
+<li><p>基于Property实现@cached_property</p>
+</li>
+<li><p>Python函数和方法的区别</p>
+<p>​</p>
+</li>
+</ol>
+<p>如果之前不了解Python Descriptor，建议先过一遍<a href="https://docs.python.org/2/howto/descriptor.html" target="_blank" rel="noopener">Descriptor How To Guide</a>。对于英语不过关的同学，也可以看一下<a href="http://pyzh.readthedocs.io/en/latest/Descriptor-HOW-TO-Guide.html" target="_blank" rel="noopener">中文资源</a>。</p>
+<a id="more"></a>
+<h4 id="什么是Descriptor？"><a href="#什么是Descriptor？" class="headerlink" title="什么是Descriptor？"></a>什么是Descriptor？</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Descriptor</span><span class="params">(object)</span>:</span></span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">        self.val = <span class="string">"init"</span></span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__get__</span><span class="params">(self, obj, type=None)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        return value</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        <span class="keyword">return</span> self.val</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__set__</span><span class="params">(self, obj, value)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        return None</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        self.val = value</span><br><span class="line">        </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__delete__</span><span class="params">(self, obj)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        return None</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        <span class="keyword">del</span> self.val</span><br><span class="line">        </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span><span class="params">(object)</span>:</span></span><br><span class="line">    </span><br><span class="line">    x = Descriptor()</span><br><span class="line">    </span><br><span class="line">In [<span class="number">2</span>]: a = A()</span><br><span class="line"></span><br><span class="line">In [<span class="number">3</span>]: a.x</span><br><span class="line">Out[<span class="number">3</span>]: <span class="string">'init'</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">4</span>]: a.x = <span class="string">"change"</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">5</span>]: a.x</span><br><span class="line">Out[<span class="number">5</span>]: <span class="string">'change'</span></span><br></pre></td></tr></table></figure>
+<p>如果一个<strong>继承于object的类</strong>实现了__get__，__set_<em>\</em>，__delete__中其中任意一种方法，那么该类的对象就是一个descriptor，在上述例子中a.x就是一个描述器。</p>
+<p>为什么一定要继承于object呢？因为descriptor机制只作用于新式类。</p>
+<h4 id="Descriptor如何被调用？"><a href="#Descriptor如何被调用？" class="headerlink" title="Descriptor如何被调用？"></a>Descriptor如何被调用？</h4><p>Descriptor的调用机制是基于Python的属性访问机制的，因此弄清楚Python的属性访问机制是很有必要的。</p>
+<h5 id="Before-Descriptor"><a href="#Before-Descriptor" class="headerlink" title="Before Descriptor"></a>Before Descriptor</h5><p>在出现Descriptor机制之前，如果访问a.x属性，则Python属性默认的查找顺序是：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">st=&gt;start: a.x</span><br><span class="line">cond1=&gt;condition: a.__dict__[&apos;x&apos;]?</span><br><span class="line">cond2=&gt;condition: type(a).__dict__[&apos;x&apos;]?</span><br><span class="line">cond3=&gt;condition: type(a)的基类.__dict__[&apos;x&apos;]?</span><br><span class="line">end1=&gt;end: AttributeError</span><br><span class="line">end2=&gt;end: return</span><br><span class="line"></span><br><span class="line">st-&gt;cond1</span><br><span class="line">cond1(yes)-&gt;end2</span><br><span class="line">cond1(no)-&gt;cond2</span><br><span class="line">cond2(yes)-&gt;end2</span><br><span class="line">cond2(no)-&gt;cond3</span><br><span class="line">cond3(yes)-&gt;end2</span><br><span class="line">cond3(no)-&gt;end1</span><br></pre></td></tr></table></figure>
+<h5 id="After-Descriptor"><a href="#After-Descriptor" class="headerlink" title="After Descriptor"></a>After Descriptor</h5><p>在出现Descriptor之后，Python对象属性的访问机制就出现了变化，下面以Python代码模拟这一个寻找过程：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">object_getattr</span><span class="params">(obj, name)</span>:</span></span><br><span class="line">    value, cls = class_lookup(obj.__class__, name)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 首先判断是否为Data Descriptor</span></span><br><span class="line">    <span class="keyword">if</span> value <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span> <span class="keyword">and</span> hasattr(value, <span class="string">"__get__"</span>) <span class="keyword">and</span> hasattr(value, <span class="string">"__set__"</span>):</span><br><span class="line">        <span class="keyword">return</span> value.__get__(obj, cls)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 判断属性是否在对象的__dict__中（Object Attribute）</span></span><br><span class="line">    w = obj.__dict__.get(name)</span><br><span class="line">    <span class="keyword">if</span> w <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</span><br><span class="line">        <span class="keyword">return</span> w</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> value <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 判断是否为Non Data Descriptor</span></span><br><span class="line">        <span class="keyword">if</span> hasattr(v, <span class="string">"__get__"</span>):</span><br><span class="line">            <span class="keyword">return</span> v.__get__(obj, cls)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="comment"># 判断是否为普通的类属性</span></span><br><span class="line">            <span class="keyword">return</span> v</span><br><span class="line">        </span><br><span class="line">    <span class="keyword">raise</span> AttributeError</span><br><span class="line"></span><br><span class="line">    </span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">class_lookup</span><span class="params">(cls, name)</span>:</span></span><br><span class="line">    value = cls.__dict__.get(name)</span><br><span class="line">    <span class="keyword">if</span> value <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</span><br><span class="line">        <span class="keyword">return</span> value, cls</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 遍历基类寻找属性</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> cls.__bases__:</span><br><span class="line">        value, cls = class_lookup(i, name)</span><br><span class="line">        <span class="keyword">if</span> value <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</span><br><span class="line">            <span class="keyword">return</span> value, cls</span><br><span class="line">        </span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">None</span>, <span class="keyword">None</span></span><br></pre></td></tr></table></figure>
+<p>在上面的Python代码中很容易可以看到<a href="https://docs.python.org/2/howto/descriptor.html#descriptor-protocol" target="_blank" rel="noopener">How to Guide</a>中强调的Descriptor优先级是如何保证的：Data Descriptor &gt; Object Attribute &gt; Non Data Descriptor。</p>
+<p>有一个想跟大家分享比较特殊的例子是，如果在obj.__dict__中找到的对象是一个descriptor，那么descriptor机制并不会被调用，即a.__dict__[‘x’] = Descriptor()，那么a.x并不会调用__get__方法。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Descriptor</span><span class="params">(object)</span>:</span></span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, val)</span>:</span></span><br><span class="line">        self.val = val</span><br><span class="line">        </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__get__</span><span class="params">(self, obj, type=None)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> self.val</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__set__</span><span class="params">(self, obj, val)</span>:</span></span><br><span class="line">        self.val = val</span><br><span class="line">        </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span><span class="params">(object)</span>:</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">2</span>]: a = A()</span><br><span class="line"></span><br><span class="line">In [<span class="number">3</span>]: a.__dict__[<span class="string">'x'</span>] = Descriptor(<span class="string">"descriptor"</span>)</span><br><span class="line"></span><br><span class="line">In [<span class="number">4</span>]: a.x</span><br><span class="line">Out[<span class="number">4</span>]: &lt;__main__.Descriptor at <span class="number">0x10b03c750</span>&gt;</span><br></pre></td></tr></table></figure>
+<p>相比Python对象属性的访问机制，Python类属性的访问机制有一点区别：</p>
+<ul>
+<li>在Python中，类其实也是一种对象，只不过类是通过MetaClass（元类）生成的，因此Python类属性的访问会将上述的class_lookup函数替换为metaclass_lookup函数。</li>
+<li>Object Attribute的查找替换为对class.__mro__的遍历查找，并且在这个查找过程中会判断找到的对象是否拥有__get__方法，如果拥有则调用。</li>
+<li>类属性访问机制调用的_<em>get\</em>_方法传入参数时，obj参数传入None，type参数传入class。</li>
+</ul>
+<p>希望更详细地探究Python类属性访问机制的同学可以看这里：<a href="http://www.betterprogramming.com/object-attribute-lookup-in-python.html" target="_blank" rel="noopener">object-attribute-lookup-in-python</a></p>
+<h4 id="Non-Data-Descriptor-与-Data-Descriptor有何区别？"><a href="#Non-Data-Descriptor-与-Data-Descriptor有何区别？" class="headerlink" title="Non Data Descriptor 与 Data Descriptor有何区别？"></a>Non Data Descriptor 与 Data Descriptor有何区别？</h4><p>Non Data Descriptor只需实现__get_<em>方法，Data Descriptor需要同时实现\</em>_get__方法和__set__方法。</p>
+<p>如果要实现一个只读的Data Descriptor，那么只需要在__set__方法中抛出异常即可。</p>
+<p>Data Descriptor和Non Data Descriptor最大的区别就是上述的优先级问题，当descriptor与obj.__dict__中一个属性同名时：</p>
+<ul>
+<li>如果descriptor是一个Data Descriptor，那么返回descriptor.__get__的调用值。</li>
+<li>如果descriptor是一个Non Data Descriptor，那么返回obj.__dict__中的属性值。</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">NonDataDescriptor</span><span class="params">(object)</span>:</span></span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">        self.value = <span class="string">"nondata_descriptor"</span></span><br><span class="line">        </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__get__</span><span class="params">(self, instance, owner)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> self.value</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">DataDescriptor</span><span class="params">(object)</span>:</span></span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">        self.value = <span class="string">"data_descriptor"</span></span><br><span class="line">        </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__get__</span><span class="params">(self, instance, owner)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> self.value</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__set__</span><span class="params">(self, instance, value)</span>:</span></span><br><span class="line">        self.value = value</span><br><span class="line">        </span><br><span class="line">        </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Container</span><span class="params">(object)</span>:</span></span><br><span class="line">    </span><br><span class="line">    d1 = NonDataDescriptor()</span><br><span class="line">    d2 = DataDescriptor()</span><br><span class="line">    </span><br><span class="line">In [<span class="number">14</span>]: c = Container()</span><br><span class="line"></span><br><span class="line">In [<span class="number">15</span>]: c.__dict__[<span class="string">'d1'</span>] = <span class="string">"nondata"</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">16</span>]: c.__dict__[<span class="string">'d2'</span>] = <span class="string">"data"</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">17</span>]: c.d1</span><br><span class="line">Out[<span class="number">17</span>]: <span class="string">'nondata'</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">18</span>]: c.d2</span><br><span class="line">Out[<span class="number">18</span>]: <span class="string">'data_descriptor'</span></span><br></pre></td></tr></table></figure>
+<h4 id="Property原理"><a href="#Property原理" class="headerlink" title="@Property原理"></a>@Property原理</h4><p>Property在Python源码中被实现为一个类，通过Property可以快速定义一个Data Descriptor。</p>
+<p>Property的纯Python代码实现如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Property</span><span class="params">(object)</span>:</span></span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, fget=None, fset=None, fdel=None, doc=None)</span>:</span></span><br><span class="line">        self.fget = fget</span><br><span class="line">        self.fset = fset</span><br><span class="line">        self.fdel = fdel</span><br><span class="line">        self.__doc__ = doc</span><br><span class="line">        </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__get__</span><span class="params">(self, obj, type=None)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> obj <span class="keyword">is</span> <span class="keyword">None</span>:</span><br><span class="line">            <span class="keyword">return</span> self</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> self.fget <span class="keyword">is</span> <span class="keyword">None</span>:</span><br><span class="line">            <span class="keyword">raise</span> AttributeError(<span class="string">"UnReadable Attribute."</span>)</span><br><span class="line">            </span><br><span class="line">        <span class="keyword">return</span> self.fget(obj)</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__set__</span><span class="params">(self, obj, value)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> self.fset <span class="keyword">is</span> <span class="keyword">None</span>:</span><br><span class="line">            <span class="keyword">raise</span> AttributeError(<span class="string">"can't set Attribute."</span>)</span><br><span class="line">            </span><br><span class="line">        self.fset(obj, value)</span><br><span class="line">        </span><br><span class="line">        </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__delete__</span><span class="params">(self, obj)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> self.<span class="keyword">del</span> <span class="keyword">is</span> <span class="keyword">None</span>:</span><br><span class="line">            <span class="keyword">raise</span> AttributeError(<span class="string">"can't delete Attribute."</span>)</span><br><span class="line">            </span><br><span class="line">        self.<span class="keyword">del</span>(obj)</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">getter</span><span class="params">(self, fget)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> type(self)(fget, fset=self.fset, fdel=self.fdel, doc=self.__doc__)</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">setter</span><span class="params">(self, fset)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> type(self)(self.fget, fset, fdel=self.fdel, doc=self.__doc__)</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">deleter</span><span class="params">(self, fdel)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> type(self)(self.fget, self.fset, fdel, self.__doc__)</span><br></pre></td></tr></table></figure>
+<p>Property的使用方法一般有两种：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 第一种使用方法：</span></span><br><span class="line"><span class="meta">@property</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">a</span><span class="params">(self)</span>:</span></span><br><span class="line">    ...</span><br><span class="line">    </span><br><span class="line"><span class="meta">@a.setter</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">a</span><span class="params">(self, value)</span></span></span><br><span class="line"><span class="function">    ...</span></span><br><span class="line"><span class="function">    </span></span><br><span class="line"><span class="function"># 第二种使用方法</span></span><br><span class="line">a = property()</span><br><span class="line"><span class="meta">@a.getter</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_a</span><span class="params">()</span>:</span></span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line"><span class="meta">@a.setter</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">set_a</span><span class="params">()</span>:</span></span><br><span class="line">    ...</span><br></pre></td></tr></table></figure>
+<p>有时候常常被@这个符号所迷惑，其实@符号基本可以等价为a = property(a)。</p>
+<p>在使用第一种方法时，需要注意setter装饰的方法必须跟property装饰的方法同名，否则setter装饰器将不起作用，<a href="https://stackoverflow.com/questions/4183432/cant-set-attribute-with-new-style-properties-in-python" target="_blank" rel="noopener">stackoverflow上也有关于这个问题的讨论</a>。</p>
+<h4 id="基于Property实现-cached-property"><a href="#基于Property实现-cached-property" class="headerlink" title="基于Property实现@cached_property"></a>基于Property实现@cached_property</h4><p>@cached_property装饰器是一种很常用的轮子，在Django和Werkzeug中都有类似的实现。在实现的时候需要注意以下两点：</p>
+<ul>
+<li>实例的更改是否会污染类变量</li>
+<li>更新实际的value时是否同时更新了缓存中的值</li>
+</ul>
+<p>这是是我一开始写的一个<strong>错误实现</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CachedProperty</span><span class="params">(property)</span>:</span></span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, *args, **kwargs)</span>:</span></span><br><span class="line">        super(CachedProperty, self).__init__(*args, **kwargs)</span><br><span class="line">        self._cached_property = <span class="keyword">None</span></span><br><span class="line">        </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__get__</span><span class="params">(self, obj, type=None)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> obj <span class="keyword">is</span> <span class="keyword">None</span>:</span><br><span class="line">            <span class="keyword">return</span> self</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> self.fget <span class="keyword">is</span> <span class="keyword">None</span>:</span><br><span class="line">            <span class="keyword">raise</span> AttributeError(<span class="string">"UnReadable Attribute."</span>)</span><br><span class="line">            </span><br><span class="line">        <span class="keyword">if</span> self._cached_property <span class="keyword">is</span> <span class="keyword">None</span>:</span><br><span class="line">            self._cached_property = self.fget(obj)</span><br><span class="line">            </span><br><span class="line">        <span class="keyword">return</span> self._cached_property</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__set__</span><span class="params">(self, obj, value)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> self.fset <span class="keyword">is</span> <span class="keyword">None</span>:</span><br><span class="line">            <span class="keyword">raise</span> AttributeError(<span class="string">"can't set Attribute."</span>)</span><br><span class="line">            </span><br><span class="line">        self.fset(obj, value)</span><br><span class="line">        self._cached_property = self.fget(obj)</span><br><span class="line">        </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__delete__</span><span class="params">(self, obj)</span>:</span></span><br><span class="line">        super(CachedProperty, self).__init__(obj)</span><br><span class="line">        self._cached_property = <span class="keyword">None</span></span><br><span class="line">        </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Container</span><span class="params">(object)</span>:</span></span><br><span class="line">    </span><br><span class="line"><span class="meta">    @CachedProperty</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">attr</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> self._attr</span><br><span class="line">    </span><br><span class="line"><span class="meta">    @attr.setter</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">attr</span><span class="params">(self, value)</span>:</span></span><br><span class="line">        self._attr = value</span><br></pre></td></tr></table></figure>
+<p>这一种实现哪里出错了呢？它的实例污染了全局变量：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">In [<span class="number">11</span>]: c1 = Container()</span><br><span class="line"></span><br><span class="line">In [<span class="number">12</span>]: c1.attr = <span class="string">"c1 attr"</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">13</span>]: c1.attr</span><br><span class="line">Out[<span class="number">13</span>]: <span class="string">'c1 attr'</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">14</span>]: c2 = Container()</span><br><span class="line"></span><br><span class="line">In [<span class="number">15</span>]: c2.attr</span><br><span class="line">Out[<span class="number">15</span>]: <span class="string">'c1 attr'</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">16</span>]: c2.attr = <span class="string">"c2 attr"</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">17</span>]: c1.attr</span><br><span class="line">Out[<span class="number">17</span>]: <span class="string">'c2 attr'</span></span><br></pre></td></tr></table></figure>
+<p>因此缓存的value不应该绑定在CachedProperty的实例上面，否则每一个Container的实例都能改变其他实例的attr属性，造成了类变量的污染。</p>
+<p>正确的实现应该是每个实例的缓存绑定在各自的__dict__变量中：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CachedProperty</span><span class="params">(property)</span>:</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, *args, **kwargs)</span>:</span></span><br><span class="line">        super(CachedProperty, self).__init__(*args, **kwargs)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__get__</span><span class="params">(self, obj, type=None)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> obj <span class="keyword">is</span> <span class="keyword">None</span>:</span><br><span class="line">            <span class="keyword">return</span> self</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> self.fget <span class="keyword">is</span> <span class="keyword">None</span>:</span><br><span class="line">            <span class="keyword">raise</span> AttributeError(<span class="string">"Unreadable attribute"</span>)</span><br><span class="line"></span><br><span class="line">        cached_key = self.fget.__name__</span><br><span class="line">        <span class="keyword">if</span> cached_key <span class="keyword">not</span> <span class="keyword">in</span> obj.__dict__:</span><br><span class="line">            obj.__dict__[cached_key] = self.fget(obj)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> obj.__dict__[cached_key]</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__set__</span><span class="params">(self, obj, value)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> self.fset <span class="keyword">is</span> <span class="keyword">None</span>:</span><br><span class="line">            <span class="keyword">raise</span> AttributeError(<span class="string">"Unset attribute"</span>)</span><br><span class="line"></span><br><span class="line">        self.fset(obj, value)</span><br><span class="line">        cached_key = self.fget.__name__</span><br><span class="line">        obj.__dict__[cached_key] = self.fget(obj)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__delete__</span><span class="params">(self, obj)</span>:</span></span><br><span class="line">        super(CachedProperty, self).__delete__(obj)</span><br><span class="line">        <span class="keyword">del</span> obj.__dict__[self.fget.__name__]</span><br></pre></td></tr></table></figure>
+<h4 id="Python函数和方法的区别"><a href="#Python函数和方法的区别" class="headerlink" title="Python函数和方法的区别"></a>Python函数和方法的区别</h4><p>Function在Python中被实现为一个Non Data Descriptor，以下是Python代码表示的Function：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Function</span><span class="params">(object)</span>:</span></span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__get__</span><span class="params">(self, obj, type=None)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> types.MethodType(self, obj, type)</span><br></pre></td></tr></table></figure>
+<p>当在类中定义Function的时候，如果直接访问类的__dict__变量，仍能得到一个Function object，此时拿到的还不是一个<strong>方法</strong>，因为Function 还没有跟实例绑定。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span><span class="params">(object)</span>:</span></span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">test</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">    </span><br><span class="line">In [<span class="number">2</span>]: A.__dict__[<span class="string">'test'</span>]</span><br><span class="line">Out[<span class="number">2</span>]: &lt;function __main__.test&gt;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>当从实例调用方法时，a.test等价于types.MethodType(test, a, None)，此时返回一个bound method，即test function已经绑定了实例a。</li>
+<li>当从类调用方法时，A.test等价于types.MethodType(test, None, A)，此时返回的是unbound method。</li>
+</ul>
+<h5 id="classmethod"><a href="#classmethod" class="headerlink" title="@classmethod"></a>@classmethod</h5><p>classmethod需要绑定class，以下是Python代码实现：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">classmethod</span><span class="params">(object)</span>:</span></span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, f)</span>:</span></span><br><span class="line">        self.f = f</span><br><span class="line">        </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__get__</span><span class="params">(self, obj, klass=None)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> klass <span class="keyword">is</span> <span class="keyword">None</span>:</span><br><span class="line">            klass = type(obj)</span><br><span class="line">            </span><br><span class="line">        <span class="function"><span class="keyword">def</span> <span class="title">newfunc</span><span class="params">(*args, **kwargs)</span>:</span></span><br><span class="line">            <span class="keyword">return</span> self.f(klass, *args, **kwargs)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> newfunc</span><br></pre></td></tr></table></figure>
+<p>因此在Python中如果一个类的方法使用了@classmethod，即使从实例调用这个方法，传进去的第一个参数仍然是class。</p>
+<h5 id="staticmethod"><a href="#staticmethod" class="headerlink" title="@staticmethod"></a>@staticmethod</h5><p>staticmethod不需要绑定class，以下是Python代码实现：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">staticmethod</span><span class="params">(object)</span>:</span></span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, f)</span>:</span></span><br><span class="line">        self.f = f</span><br><span class="line">        </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__get__</span><span class="params">(self, obj, type=None)</span></span></span><br><span class="line"><span class="function">        <span class="title">return</span> <span class="title">self</span>.<span class="title">f</span></span></span><br></pre></td></tr></table></figure>
+<p>参考资料：</p>
+<ul>
+<li><a href="https://docs.python.org/2/howto/descriptor.html#descriptor-protocol" target="_blank" rel="noopener">Descriptor How To Guide</a></li>
+<li><a href="https://www.zhihu.com/question/25391709" target="_blank" rel="noopener">如何理解 Python 的 Descriptor?</a></li>
+<li><a href="http://www.betterprogramming.com/object-attribute-lookup-in-python.html" target="_blank" rel="noopener">object-attribute-lookup-in-python(强烈推荐)</a></li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    CrazyLeaves
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://zifenghuang1.github.io/Blog/2018/03/02/Python描述器协议/" title="Python描述器协议">https://zifenghuang1.github.io/Blog/2018/03/02/Python描述器协议/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/Blog/tags/Python/" rel="tag"># Python</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/Blog/2018/02/24/Hello-2018/" rel="next" title="Hello,2018">
+                <i class="fa fa-chevron-left"></i> Hello,2018
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/Blog/images/avatar.jpeg"
+                alt="CrazyLeaves" />
+            
+              <p class="site-author-name" itemprop="name">CrazyLeaves</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/Blog/archives">
+              
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/Blog/categories/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/Blog/tags/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/zifenghuang1" target="_blank" title="GitHub">
+                    
+                      <i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="http://www.zhihu.com/people/huang-zi-feng-11" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-link"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Abstract"><span class="nav-number">1.</span> <span class="nav-text">Abstract</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#什么是Descriptor？"><span class="nav-number">1.1.</span> <span class="nav-text">什么是Descriptor？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Descriptor如何被调用？"><span class="nav-number">1.2.</span> <span class="nav-text">Descriptor如何被调用？</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Before-Descriptor"><span class="nav-number">1.2.1.</span> <span class="nav-text">Before Descriptor</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#After-Descriptor"><span class="nav-number">1.2.2.</span> <span class="nav-text">After Descriptor</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Non-Data-Descriptor-与-Data-Descriptor有何区别？"><span class="nav-number">1.3.</span> <span class="nav-text">Non Data Descriptor 与 Data Descriptor有何区别？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Property原理"><span class="nav-number">1.4.</span> <span class="nav-text">@Property原理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#基于Property实现-cached-property"><span class="nav-number">1.5.</span> <span class="nav-text">基于Property实现@cached_property</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Python函数和方法的区别"><span class="nav-number">1.6.</span> <span class="nav-text">Python函数和方法的区别</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#classmethod"><span class="nav-number">1.6.1.</span> <span class="nav-text">@classmethod</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#staticmethod"><span class="nav-number">1.6.2.</span> <span class="nav-text">@staticmethod</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">CrazyLeaves</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">2.5k</span>
+  
+</div>
+
+
+
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a></div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/Blog/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/Blog/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/Blog/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/Blog/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/Blog/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/Blog/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/Blog/lib/three/three.min.js"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/Blog/lib/three/canvas_lines.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/Blog/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/Blog/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/Blog/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/Blog/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/Blog/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://crazyleaves.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'https://zifenghuang1.github.io/Blog/2018/03/02/Python描述器协议/';
+          this.page.identifier = '2018/03/02/Python描述器协议/';
+          this.page.title = 'Python描述器协议';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://crazyleaves.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("rDxWAfN6a9KSVqmYfFMmwkAe-gzGzoHsz", "v7ET3HMM1Vvy4586AT8QkS0x");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+  <script type="text/javascript" src="/Blog/js/src/js.cookie.js?v=5.1.3"></script>
+  <script type="text/javascript" src="/Blog/js/src/scroll-cookie.js?v=5.1.3"></script>
+
+
+  
+
+
+</body>
+</html>
