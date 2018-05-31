@@ -142,7 +142,7 @@
 <meta property="og:image" content="https://ws1.sinaimg.cn/large/006tKfTcly1frubc06w1oj30xc0umtfd.jpg">
 <meta property="og:image" content="https://ws4.sinaimg.cn/large/006tKfTcly1frubc1cg66j30xc0umjzy.jpg">
 <meta property="og:image" content="https://ws2.sinaimg.cn/large/006tKfTcly1frubbzgx21j30xc0umq9m.jpg">
-<meta property="og:updated_time" content="2018-05-31T02:38:10.000Z">
+<meta property="og:updated_time" content="2018-05-31T02:48:56.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Programing Languages Part A Note（一）：工欲善其事，必先利其器">
 <meta name="twitter:description" content="Motivation临近毕业季，每天在学校里面除了写论文就是改论文，生活三点一线略显无聊，于是在知乎上搜索了一下Coursera有什么近期开课的计算机神课，看到回答中提到华盛顿大学的Programing Languages并且评价颇高，果断选择旁听入坑。 Programing Languages是一门中级课程，适用于有学习过一门编程语言背景的学生，其目的是通过讲述几门小众语言来描述编程范式（其中尤">
@@ -374,7 +374,7 @@
               
                 <span class="post-meta-item-text">更新于&#58;</span>
               
-              <time title="更新于" itemprop="dateModified" datetime="2018-05-31T10:38:10+08:00">
+              <time title="更新于" itemprop="dateModified" datetime="2018-05-31T10:48:56+08:00">
                 2018-05-31
               </time>
             
@@ -499,13 +499,13 @@
 <p>在最新的教程里面提示可以安装110.80版本，但是material里面打开的跳转链接似乎仍然是110.79版本，这里大家要注意一点。推荐大家尽量不要装110.79版本，因为79版本还有个bug就是基本库引用不了，在Homework 1中有一道题目的要求就是使用Int.ToString这个库函数，如果是79版本就会报错找不到这个库的路径：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">unexpected exception (bug?) in SML/NJ: Io [Io: openIn failed on &quot;/Users/jhr/Work/smlnj/osx-dist/smlnj.dst/sml.boot.x86-unix/smlnj/basis/.cm/x86-unix/basis.cm&quot;, No such file or directory]</span><br><span class="line">  raised at: Basis/Implementation/IO/bin-io-fn.sml:617.25-617.71</span><br><span class="line">             ../cm/util/safeio.sml:30.11</span><br><span class="line">             ../compiler/TopLevel/interact/evalloop.sml:44.55</span><br></pre></td></tr></table></figure>
 <p>在Coursera Forum里面提到更新到80版本就能解决这个问题了，在Mac上已经安装了79版本的同学只需要把80版本的pkg下载下来直接安装即可。</p>
-<h2 id="SML-Mode-Installtion"><a href="#SML-Mode-Installtion" class="headerlink" title="SML Mode Installtion"></a>SML Mode Installtion</h2><p>SML Mode是Emacs支持SML REPL的一个插件，基本所有的Key Binding都是从M或者C开头，C就是Control这个大家都懂，但M又是什么呢？M是指Meta键，但Mac键盘上没有Meta键，<a href="https://www.emacswiki.org/emacs/EmacsForMacOS#toc26" target="_blank" rel="noopener">可以通过将Meta键绑定到Option上面，也可以直接用Alt+b来表示Meta键</a>。需要注意Mac系统本身也带有emacs，因此通过命令行启动的emacs默认是老版本，一些Key Binding是未定义的，可以通过Spotlight来打开新版Emacs。 </p>
+<h2 id="SML-Mode-Installation"><a href="#SML-Mode-Installation" class="headerlink" title="SML Mode Installation"></a>SML Mode Installation</h2><p>SML Mode是Emacs支持SML REPL的一个插件，基本所有的Key Binding都是从M或者C开头，C就是Control这个大家都懂，但M又是什么呢？M是指Meta键，但Mac键盘上没有Meta键，<a href="https://www.emacswiki.org/emacs/EmacsForMacOS#toc26" target="_blank" rel="noopener">可以通过将Meta键绑定到Option上面，也可以直接用Alt+b来表示Meta键</a>。需要注意Mac系统本身也带有emacs，因此通过命令行启动的emacs默认是老版本，一些Key Binding是未定义的，可以通过Spotlight来打开新版Emacs。 </p>
 <p>通过C-x C-f test.sml打开一个命名为test的sml文件以后，再输入C-c C-s将会在Emacs底端弹出sml command，输入sml将进入SML REPL，但是此时弹出了一个很奇怪的错误：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sml command:sml</span><br><span class="line">Searching for program: no such file or directory, sml</span><br></pre></td></tr></table></figure>
 <p>搜了一下发现是Emacs在启动的时候没找到sml命令，因此需要在Home目录下编辑Emacs的启动配置文件.emacs（其实教程里面也有提及这个问题，我看漏了。。）:</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># For Mac OSX 10.6 or later</span><br><span class="line">(setenv &quot;PATH&quot; (concat &quot;/usr/local/smlnj/bin:&quot; (getenv &quot;PATH&quot;)))</span><br><span class="line">(setq exec-path (cons &quot;/usr/local/smlnj/bin&quot;  exec-path))</span><br></pre></td></tr></table></figure>
 <p>编辑完成test.sml文件之后，通过C-x C-s保存文件。</p>
-<h2 id="Emacs-Techique"><a href="#Emacs-Techique" class="headerlink" title="Emacs Techique"></a>Emacs Techique</h2><p><img src="https://ws3.sinaimg.cn/large/006tKfTcly1frubc2ds6pj31kw0zktt7.jpg" alt="屏幕快照 2018-05-31 上午9.28.04"></p>
+<h2 id="Emacs-Technique"><a href="#Emacs-Technique" class="headerlink" title="Emacs Technique"></a>Emacs Technique</h2><p><img src="https://ws3.sinaimg.cn/large/006tKfTcly1frubc2ds6pj31kw0zktt7.jpg" alt="屏幕快照 2018-05-31 上午9.28.04"></p>
 <p>上图是我常用的一个Emacs工作环境布局，左上角的buffer（在Emacs里面一个编辑窗口被称为buffer）是一个SML REPL，用于运行Homework的test文件；左下角的buffer是编写Homework的文件；右上角的buffer是Homework的test文件；右下角的buffer是一个Command Console，用于显示对文件进行了哪些命令操作。</p>
 <p>首先说一下如何弄成这个环境布局：</p>
 <ol>
@@ -749,7 +749,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Motivation"><span class="nav-number">1.</span> <span class="nav-text">Motivation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Use-Coursera-Forum"><span class="nav-number">2.</span> <span class="nav-text">Use Coursera Forum</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SML-Environment"><span class="nav-number">3.</span> <span class="nav-text">SML Environment</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SML-Mode-Installtion"><span class="nav-number">4.</span> <span class="nav-text">SML Mode Installtion</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Emacs-Techique"><span class="nav-number">5.</span> <span class="nav-text">Emacs Techique</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Motivation"><span class="nav-number">1.</span> <span class="nav-text">Motivation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Use-Coursera-Forum"><span class="nav-number">2.</span> <span class="nav-text">Use Coursera Forum</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SML-Environment"><span class="nav-number">3.</span> <span class="nav-text">SML Environment</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SML-Mode-Installation"><span class="nav-number">4.</span> <span class="nav-text">SML Mode Installation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Emacs-Technique"><span class="nav-number">5.</span> <span class="nav-text">Emacs Technique</span></a></li></ol></div>
             
 
           </div>
