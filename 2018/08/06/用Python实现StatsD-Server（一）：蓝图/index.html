@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/Blog/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/Blog/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/Blog/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.cat.net/css?family=Roboto Slab:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Lobster Two:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/Blog/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/Blog/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/Blog/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/Blog/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/Blog/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/Blog/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Python,StatsD," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="对于一名终日奋斗在业务最前线的后端工程师来说，监控打点服务就像是全视之眼，时刻监督着线上数据，并且在故障发生时为工程师们提供诊断信息。">
+<meta name="keywords" content="Python,StatsD">
+<meta property="og:type" content="article">
+<meta property="og:title" content="用Python实现StatsD Server（一）：蓝图">
+<meta property="og:url" content="https://zifenghuang1.github.io/Blog/2018/08/06/用Python实现StatsD-Server（一）：蓝图/index.html">
+<meta property="og:site_name" content="CrazyLeaves">
+<meta property="og:description" content="对于一名终日奋斗在业务最前线的后端工程师来说，监控打点服务就像是全视之眼，时刻监督着线上数据，并且在故障发生时为工程师们提供诊断信息。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://zifenghuang1.github.io/Blog/2018/08/06/用Python实现StatsD-Server（一）：蓝图/736903.jpg">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/006tKfTcgy1ftz7uf7kq1j30j20al0sy.jpg">
+<meta property="og:updated_time" content="2018-08-06T15:26:43.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="用Python实现StatsD Server（一）：蓝图">
+<meta name="twitter:description" content="对于一名终日奋斗在业务最前线的后端工程师来说，监控打点服务就像是全视之眼，时刻监督着线上数据，并且在故障发生时为工程师们提供诊断信息。">
+<meta name="twitter:image" content="https://zifenghuang1.github.io/Blog/2018/08/06/用Python实现StatsD-Server（一）：蓝图/736903.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/Blog/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"right","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":true},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://zifenghuang1.github.io/Blog/2018/08/06/用Python实现StatsD-Server（一）：蓝图/"/>
+
+
+
+
+
+  <title>用Python实现StatsD Server（一）：蓝图 | CrazyLeaves</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?028a314c0922416bd46027adc38f64f9";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/Blog/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">CrazyLeaves</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description"></h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/Blog/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/Blog/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/Blog/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/Blog/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/Blog/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://zifenghuang1.github.io/Blog/Blog/2018/08/06/用Python实现StatsD-Server（一）：蓝图/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="CrazyLeaves">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/Blog/images/avatar.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyLeaves">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">用Python实现StatsD Server（一）：蓝图</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-06T23:24:37+08:00">
+                2018-08-06
+              </time>
+            
+
+            
+              <span class="post-meta-divider">|</span>
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-check-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">更新于&#58;</span>
+              
+              <time title="更新于" itemprop="dateModified" datetime="2018-08-06T23:26:43+08:00">
+                2018-08-06
+              </time>
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/Blog/categories/Python/" itemprop="url" rel="index">
+                    <span itemprop="name">Python</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/Blog/2018/08/06/用Python实现StatsD-Server（一）：蓝图/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2018/08/06/用Python实现StatsD-Server（一）：蓝图/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/Blog/2018/08/06/用Python实现StatsD-Server（一）：蓝图/" class="leancloud_visitors" data-flag-title="用Python实现StatsD Server（一）：蓝图">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  1,593
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  6
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <img src="/Blog/2018/08/06/用Python实现StatsD-Server（一）：蓝图/736903.jpg" title="StatsD Server">
+<p>对于一名终日奋斗在业务最前线的后端工程师来说，监控打点服务就像是全视之眼，时刻监督着线上数据，并且在故障发生时为工程师们提供诊断信息。</p>
+<a id="more"></a>
+<p>监控打点服务收集的数据在我看来主要可以分为两类，一类是非业务类数据，一类是业务类数据。一般来说，运维工程师会对非业务类的数据比较关注，如线上服务器CPU负载，内存使用量等；而对于业务团队的后端工程师来说，则更为关注业务类的数据，比如说对于一个负责红包开发的业务团队，就会比较关注红包发放API的QPS，一旦红包发放的QPS相比往日异常，则可能线上出现了业务逻辑上的异常。</p>
+<p>说到红包，就顺便说个笑话吧，有一天早上饿了么负责红包业务的工程师收到oncall，线上发红包API的QPS相比往日增加了一倍，怀疑是昨晚的发布导致了红包的异常发放。工程师们仔细地review了代码，发现昨晚发布的代码确实没有问题，半小时后，他们终于发现了原因：美团外卖的服务器挂了😊。</p>
+<p>扯回正题，监控打点服务还有一个非常重要的报警功能，一旦某个数据指标达到工程师的阀门值，则通过邮件，短信，钉钉等方法通知工程师。</p>
+<p>其实监控打点服务在当今业界已经有很多成熟开源的方案，我现在要实现的只不过是再造一次轮子罢了，但是既然要造轮子，总得清楚这个轮子的结构和功能。那么首先来谈谈，实现一个监控打点服务需要哪些组件。</p>
+<p>监控打点服务，主要分为三个组件，分别是<strong>Client，Server，Backend</strong>：</p>
+<ul>
+<li>Client可以视为C/S架构中的C，通常作为SOA框架中的一个组件实现，不同的SOA服务通过Client发送打点数据。</li>
+<li>Server则可以视为C/S架构中的S，负责收集来自不同服务的打点数据，定期将数据发送到Backend。</li>
+<li>Backend可以视为存储磁盘，存储打点数据并提供查询功能，通常实现为一个时序数据库。</li>
+</ul>
+<p>接下来我将会通过Python实现Client组件和Server组件，读者只需具有基本的Python基础和后端服务概念即可。</p>
+<h2 id="组件关系"><a href="#组件关系" class="headerlink" title="组件关系"></a>组件关系</h2><p><img src="https://ws1.sinaimg.cn/large/006tKfTcgy1ftz7uf7kq1j30j20al0sy.jpg" alt="监控组件"></p>
+<p>Client组件通过StatsD协议与Server进行沟通，Server则根据Backend的沟通协议，定时将收集到的数据存储到Backend之中。</p>
+<p>在了解了三个组件的关系以后，下面来逐一分析每个组件需要实现的具体功能。</p>
+<h3 id="Client组件"><a href="#Client组件" class="headerlink" title="Client组件"></a>Client组件</h3><h4 id="指标函数"><a href="#指标函数" class="headerlink" title="指标函数"></a>指标函数</h4><p>Client组件既然是面向广大后端工程师提供打点服务，那么最重要的莫过于提供打点的指标函数了，StatsD协议中提供了四种比较常见的指标函数：</p>
+<ul>
+<li>counter：counter函数就是最常见的计数器操作，对某一个key的value进行增加或者减少。</li>
+<li>timer：timer函数主要用于表示一个时间段内的数据变化，比如在一段时间内的最大值，最小值，平均值。</li>
+<li>gauge：gauge函数与counter函数类似，但是Server会对gauge指标函数的数据进行特殊处理，在存储数据到Backend时不会<strong>重置</strong>gauge指标函数的数据。</li>
+<li>set：set函数的概念类似于Python中的set概念，Server会收集通过set指标函数的unique key，形成一个集合。</li>
+</ul>
+<p>之前提到Server会定时将数据存储到Backend中，其中counter，timer，set指标函数相关的数据在发送以后都会重置数据，而gauge指标函数相关的数据则会保留。</p>
+<h4 id="两个协议"><a href="#两个协议" class="headerlink" title="两个协议"></a>两个协议</h4><p>Client与Server之间的沟通需要两个协议，一个是TCP／IP层的协议，一个是文本协议。</p>
+<p>TCP／IP层的协议只有两个选择：选择TCP还是UDP，TCP主要用于一些对数据准确性比较重要的场景，比如一天只会发送一次的打点数据；而UDP则适用于短时间内发送大量数据的场景，对于性能也比较友好。</p>
+<p>文本协议则选择StatsD协议，协议的规范非常简单：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;key&gt;:value|type[|@sample_rate]</span><br></pre></td></tr></table></figure>
+<p>这里解释一下sample_rate的概念，sample_rate是介于0到1之间的一位小数，假设sample_rate设置为0.1，那么对于同一个key，10次之中大概只会有一次数据会被真正发送到Server中，当Server知道sample_rate为0.1时，就会自动将value乘上10。通过这种抽样的方法，虽然降低了打点数据的准确率，但是进一步提高了数据传输性能。</p>
+<h3 id="Server-组件"><a href="#Server-组件" class="headerlink" title="Server 组件"></a>Server 组件</h3><p>Server组件主要负责收集Client的数据，并将数据定时flush到Backend中。</p>
+<h4 id="基本功能"><a href="#基本功能" class="headerlink" title="基本功能"></a>基本功能</h4><ul>
+<li>Server需要常驻于程序后台，因此将被实现为守护进程，由init进程管理。</li>
+<li>Server需要根据StatsD协议解析外部的数据，并将数据存储于内存的数据结构中。</li>
+<li>Server需要实现一个定时器，将数据定时flush到Backend中，可选的定时器模型如多线程模型（threading.Timer），协程模型（gevent）等。</li>
+<li>Server需要对接多个Backend，因此需要将Backend的一些基本操作抽象出来。</li>
+<li>Server启动时需要从命令行中读取很多的配置参数，一般来说Python的argparse库足以应付大多数的情况，但是这一回我选择使用更为优雅的click，写法则可以参考Gunicorn中settings meta写法。</li>
+</ul>
+<h4 id="协议交互"><a href="#协议交互" class="headerlink" title="协议交互"></a>协议交互</h4><p>Server除了通过StatsD协议与Client进行交互以外，Server还要规定协议与Backend进行交互，以Graphite作为Backend为例，能与Graphite沟通的协议有纯文本的HTTP协议，Python的Pickle协议，AMQP协议等。</p>
+<h3 id="Backend组件"><a href="#Backend组件" class="headerlink" title="Backend组件"></a>Backend组件</h3><p>Backend通常使用开源的分布式时序数据库，在本系列教程中并不会实现，但是有兴趣的同学可以参考graphite的whisper组件，是一个通过Python实现的800多行的时序数据库，这规模大小实在是很有让人一探究竟的冲动。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    CrazyLeaves
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://zifenghuang1.github.io/Blog/2018/08/06/用Python实现StatsD-Server（一）：蓝图/" title="用Python实现StatsD Server（一）：蓝图">https://zifenghuang1.github.io/Blog/2018/08/06/用Python实现StatsD-Server（一）：蓝图/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/Blog/tags/Python/" rel="tag"># Python</a>
+          
+            <a href="/Blog/tags/StatsD/" rel="tag"># StatsD</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/Blog/2018/05/31/Programing-Languages-Part-A-Note（一）：工欲善其事，必先利其器/" rel="next" title="Programing Languages Part A Note（一）：工欲善其事，必先利其器">
+                <i class="fa fa-chevron-left"></i> Programing Languages Part A Note（一）：工欲善其事，必先利其器
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/Blog/images/avatar.jpeg"
+                alt="CrazyLeaves" />
+            
+              <p class="site-author-name" itemprop="name">CrazyLeaves</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/Blog/archives">
+              
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/Blog/categories/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/Blog/tags/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/not94" target="_blank" title="GitHub">
+                    
+                      <i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="http://www.zhihu.com/people/huang-zi-feng-11" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-link"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#组件关系"><span class="nav-number">1.</span> <span class="nav-text">组件关系</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Client组件"><span class="nav-number">1.1.</span> <span class="nav-text">Client组件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#指标函数"><span class="nav-number">1.1.1.</span> <span class="nav-text">指标函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#两个协议"><span class="nav-number">1.1.2.</span> <span class="nav-text">两个协议</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Server-组件"><span class="nav-number">1.2.</span> <span class="nav-text">Server 组件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#基本功能"><span class="nav-number">1.2.1.</span> <span class="nav-text">基本功能</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#协议交互"><span class="nav-number">1.2.2.</span> <span class="nav-text">协议交互</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Backend组件"><span class="nav-number">1.3.</span> <span class="nav-text">Backend组件</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">CrazyLeaves</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">5.9k</span>
+  
+</div>
+
+
+
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a></div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/Blog/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/Blog/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/Blog/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/Blog/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/Blog/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/Blog/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/Blog/lib/three/three.min.js"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/Blog/lib/three/canvas_lines.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/Blog/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/Blog/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/Blog/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/Blog/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/Blog/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://crazyleaves.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'https://zifenghuang1.github.io/Blog/2018/08/06/用Python实现StatsD-Server（一）：蓝图/';
+          this.page.identifier = '2018/08/06/用Python实现StatsD-Server（一）：蓝图/';
+          this.page.title = '用Python实现StatsD Server（一）：蓝图';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://crazyleaves.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("rDxWAfN6a9KSVqmYfFMmwkAe-gzGzoHsz", "v7ET3HMM1Vvy4586AT8QkS0x");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+  <script type="text/javascript" src="/Blog/js/src/js.cookie.js?v=5.1.3"></script>
+  <script type="text/javascript" src="/Blog/js/src/scroll-cookie.js?v=5.1.3"></script>
+
+
+  
+
+
+</body>
+</html>
