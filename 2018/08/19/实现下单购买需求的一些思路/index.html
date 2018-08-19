@@ -119,7 +119,7 @@
 
 
 
-  <meta name="keywords" content="Python,StatsD," />
+  <meta name="keywords" content="business,backend," />
 
 
 
@@ -130,21 +130,20 @@
 
 
 
-<meta name="description" content="对于一名终日奋斗在业务最前线的后端工程师来说，监控打点服务就像是全视之眼，时刻监督着线上数据，并且在故障发生时为工程师们提供诊断信息。">
-<meta name="keywords" content="Python,StatsD">
+<meta name="description" content="对于一名后端工程师来说，实现一些用户下单购买商品的需求是很常见的。最近刚接了一个与购买商品相关的迭代需求，也踩了一些坑，所以跟大家分享一下坑点。">
+<meta name="keywords" content="business,backend">
 <meta property="og:type" content="article">
-<meta property="og:title" content="用Python实现StatsD Server（一）：蓝图">
-<meta property="og:url" content="https://zifenghuang1.github.io/Blog/2018/08/06/用Python实现StatsD-Server（一）：蓝图/index.html">
+<meta property="og:title" content="实现下单购买需求的一些思路">
+<meta property="og:url" content="https://zifenghuang1.github.io/Blog/2018/08/19/实现下单购买需求的一些思路/index.html">
 <meta property="og:site_name" content="CrazyLeaves">
-<meta property="og:description" content="对于一名终日奋斗在业务最前线的后端工程师来说，监控打点服务就像是全视之眼，时刻监督着线上数据，并且在故障发生时为工程师们提供诊断信息。">
+<meta property="og:description" content="对于一名后端工程师来说，实现一些用户下单购买商品的需求是很常见的。最近刚接了一个与购买商品相关的迭代需求，也踩了一些坑，所以跟大家分享一下坑点。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://zifenghuang1.github.io/Blog/2018/08/06/用Python实现StatsD-Server（一）：蓝图/736903.jpg">
-<meta property="og:image" content="https://ws1.sinaimg.cn/large/006tKfTcgy1ftz7uf7kq1j30j20al0sy.jpg">
-<meta property="og:updated_time" content="2018-08-06T15:26:43.000Z">
+<meta property="og:image" content="https://zifenghuang1.github.io/Blog/2018/08/19/实现下单购买需求的一些思路/815297.png">
+<meta property="og:updated_time" content="2018-08-19T13:07:47.127Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="用Python实现StatsD Server（一）：蓝图">
-<meta name="twitter:description" content="对于一名终日奋斗在业务最前线的后端工程师来说，监控打点服务就像是全视之眼，时刻监督着线上数据，并且在故障发生时为工程师们提供诊断信息。">
-<meta name="twitter:image" content="https://zifenghuang1.github.io/Blog/2018/08/06/用Python实现StatsD-Server（一）：蓝图/736903.jpg">
+<meta name="twitter:title" content="实现下单购买需求的一些思路">
+<meta name="twitter:description" content="对于一名后端工程师来说，实现一些用户下单购买商品的需求是很常见的。最近刚接了一个与购买商品相关的迭代需求，也踩了一些坑，所以跟大家分享一下坑点。">
+<meta name="twitter:image" content="https://zifenghuang1.github.io/Blog/2018/08/19/实现下单购买需求的一些思路/815297.png">
 
 
 
@@ -174,13 +173,13 @@
 
 
 
-  <link rel="canonical" href="https://zifenghuang1.github.io/Blog/2018/08/06/用Python实现StatsD-Server（一）：蓝图/"/>
+  <link rel="canonical" href="https://zifenghuang1.github.io/Blog/2018/08/19/实现下单购买需求的一些思路/"/>
 
 
 
 
 
-  <title>用Python实现StatsD Server（一）：蓝图 | CrazyLeaves</title>
+  <title>实现下单购买需求的一些思路 | CrazyLeaves</title>
   
 
 
@@ -327,7 +326,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://zifenghuang1.github.io/Blog/Blog/2018/08/06/用Python实现StatsD-Server（一）：蓝图/">
+    <link itemprop="mainEntityOfPage" href="https://zifenghuang1.github.io/Blog/Blog/2018/08/19/实现下单购买需求的一些思路/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="CrazyLeaves">
@@ -344,7 +343,7 @@
 
         
         
-          <h2 class="post-title" itemprop="name headline">用Python实现StatsD Server（一）：蓝图</h2>
+          <h2 class="post-title" itemprop="name headline">实现下单购买需求的一些思路</h2>
         
 
         <div class="post-meta">
@@ -356,8 +355,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-06T23:24:37+08:00">
-                2018-08-06
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-19T21:06:19+08:00">
+                2018-08-19
               </time>
             
 
@@ -372,8 +371,8 @@
               
                 <span class="post-meta-item-text">更新于&#58;</span>
               
-              <time title="更新于" itemprop="dateModified" datetime="2018-08-06T23:26:43+08:00">
-                2018-08-06
+              <time title="更新于" itemprop="dateModified" datetime="2018-08-19T21:07:47+08:00">
+                2018-08-19
               </time>
             
           </span>
@@ -391,8 +390,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/Blog/categories/Python/" itemprop="url" rel="index">
-                    <span itemprop="name">Python</span>
+                  <a href="/Blog/categories/business/" itemprop="url" rel="index">
+                    <span itemprop="name">business</span>
                   </a>
                 </span>
 
@@ -409,9 +408,9 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/Blog/2018/08/06/用Python实现StatsD-Server（一）：蓝图/#comments" itemprop="discussionUrl">
+                <a href="/Blog/2018/08/19/实现下单购买需求的一些思路/#comments" itemprop="discussionUrl">
                   <span class="post-comments-count disqus-comment-count"
-                        data-disqus-identifier="2018/08/06/用Python实现StatsD-Server（一）：蓝图/" itemprop="commentCount"></span>
+                        data-disqus-identifier="2018/08/19/实现下单购买需求的一些思路/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -419,7 +418,7 @@
 
           
           
-             <span id="/Blog/2018/08/06/用Python实现StatsD-Server（一）：蓝图/" class="leancloud_visitors" data-flag-title="用Python实现StatsD Server（一）：蓝图">
+             <span id="/Blog/2018/08/19/实现下单购买需求的一些思路/" class="leancloud_visitors" data-flag-title="实现下单购买需求的一些思路">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -444,7 +443,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1,593
+                  1,693
                 </span>
               
 
@@ -481,46 +480,107 @@
       
 
       
-        <img src="/Blog/2018/08/06/用Python实现StatsD-Server（一）：蓝图/736903.jpg" title="StatsD Server">
-<p>对于一名终日奋斗在业务最前线的后端工程师来说，监控打点服务就像是全视之眼，时刻监督着线上数据，并且在故障发生时为工程师们提供诊断信息。</p>
-<a id="more"></a>
-<p>监控打点服务收集的数据在我看来主要可以分为两类，一类是非业务类数据，一类是业务类数据。一般来说，运维工程师会对非业务类的数据比较关注，如线上服务器CPU负载，内存使用量等；而对于业务团队的后端工程师来说，则更为关注业务类的数据，比如说对于一个负责红包开发的业务团队，就会比较关注红包发放API的QPS，一旦红包发放的QPS相比往日异常，则可能线上出现了业务逻辑上的异常。</p>
-<p>说到红包，就顺便说个笑话吧，有一天早上饿了么负责红包业务的工程师收到oncall，线上发红包API的QPS相比往日增加了一倍，怀疑是昨晚的发布导致了红包的异常发放。工程师们仔细地review了代码，发现昨晚发布的代码确实没有问题，半小时后，他们终于发现了原因：美团外卖的服务器挂了😊。</p>
-<p>扯回正题，监控打点服务还有一个非常重要的报警功能，一旦某个数据指标达到工程师的阀门值，则通过邮件，短信，钉钉等方法通知工程师。</p>
-<p>其实监控打点服务在当今业界已经有很多成熟开源的方案，我现在要实现的只不过是再造一次轮子罢了，但是既然要造轮子，总得清楚这个轮子的结构和功能。那么首先来谈谈，实现一个监控打点服务需要哪些组件。</p>
-<p>监控打点服务，主要分为三个组件，分别是<strong>Client，Server，Backend</strong>：</p>
-<ul>
-<li>Client可以视为C/S架构中的C，通常作为SOA框架中的一个组件实现，不同的SOA服务通过Client发送打点数据。</li>
-<li>Server则可以视为C/S架构中的S，负责收集来自不同服务的打点数据，定期将数据发送到Backend。</li>
-<li>Backend可以视为存储磁盘，存储打点数据并提供查询功能，通常实现为一个时序数据库。</li>
-</ul>
-<p>接下来我将会通过Python实现Client组件和Server组件，读者只需具有基本的Python基础和后端服务概念即可。</p>
-<h2 id="组件关系"><a href="#组件关系" class="headerlink" title="组件关系"></a>组件关系</h2><p><img src="https://ws1.sinaimg.cn/large/006tKfTcgy1ftz7uf7kq1j30j20al0sy.jpg" alt="监控组件"></p>
-<p>Client组件通过StatsD协议与Server进行沟通，Server则根据Backend的沟通协议，定时将收集到的数据存储到Backend之中。</p>
-<p>在了解了三个组件的关系以后，下面来逐一分析每个组件需要实现的具体功能。</p>
-<h3 id="Client组件"><a href="#Client组件" class="headerlink" title="Client组件"></a>Client组件</h3><h4 id="指标函数"><a href="#指标函数" class="headerlink" title="指标函数"></a>指标函数</h4><p>Client组件既然是面向广大后端工程师提供打点服务，那么最重要的莫过于提供打点的指标函数了，StatsD协议中提供了四种比较常见的指标函数：</p>
-<ul>
-<li>counter：counter函数就是最常见的计数器操作，对某一个key的value进行增加或者减少。</li>
-<li>timer：timer函数主要用于表示一个时间段内的数据变化，比如在一段时间内的最大值，最小值，平均值。</li>
-<li>gauge：gauge函数与counter函数类似，但是Server会对gauge指标函数的数据进行特殊处理，在存储数据到Backend时不会<strong>重置</strong>gauge指标函数的数据。</li>
-<li>set：set函数的概念类似于Python中的set概念，Server会收集通过set指标函数的unique key，形成一个集合。</li>
-</ul>
-<p>之前提到Server会定时将数据存储到Backend中，其中counter，timer，set指标函数相关的数据在发送以后都会重置数据，而gauge指标函数相关的数据则会保留。</p>
-<h4 id="两个协议"><a href="#两个协议" class="headerlink" title="两个协议"></a>两个协议</h4><p>Client与Server之间的沟通需要两个协议，一个是TCP／IP层的协议，一个是文本协议。</p>
-<p>TCP／IP层的协议只有两个选择：选择TCP还是UDP，TCP主要用于一些对数据准确性比较重要的场景，比如一天只会发送一次的打点数据；而UDP则适用于短时间内发送大量数据的场景，对于性能也比较友好。</p>
-<p>文本协议则选择StatsD协议，协议的规范非常简单：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;key&gt;:value|type[|@sample_rate]</span><br></pre></td></tr></table></figure>
-<p>这里解释一下sample_rate的概念，sample_rate是介于0到1之间的一位小数，假设sample_rate设置为0.1，那么对于同一个key，10次之中大概只会有一次数据会被真正发送到Server中，当Server知道sample_rate为0.1时，就会自动将value乘上10。通过这种抽样的方法，虽然降低了打点数据的准确率，但是进一步提高了数据传输性能。</p>
-<h3 id="Server-组件"><a href="#Server-组件" class="headerlink" title="Server 组件"></a>Server 组件</h3><p>Server组件主要负责收集Client的数据，并将数据定时flush到Backend中。</p>
-<h4 id="基本功能"><a href="#基本功能" class="headerlink" title="基本功能"></a>基本功能</h4><ul>
-<li>Server需要常驻于程序后台，因此将被实现为守护进程，由init进程管理。</li>
-<li>Server需要根据StatsD协议解析外部的数据，并将数据存储于内存的数据结构中。</li>
-<li>Server需要实现一个定时器，将数据定时flush到Backend中，可选的定时器模型如多线程模型（threading.Timer），协程模型（gevent）等。</li>
-<li>Server需要对接多个Backend，因此需要将Backend的一些基本操作抽象出来。</li>
-<li>Server启动时需要从命令行中读取很多的配置参数，一般来说Python的argparse库足以应付大多数的情况，但是这一回我选择使用更为优雅的click，写法则可以参考Gunicorn中settings meta写法。</li>
-</ul>
-<h4 id="协议交互"><a href="#协议交互" class="headerlink" title="协议交互"></a>协议交互</h4><p>Server除了通过StatsD协议与Client进行交互以外，Server还要规定协议与Backend进行交互，以Graphite作为Backend为例，能与Graphite沟通的协议有纯文本的HTTP协议，Python的Pickle协议，AMQP协议等。</p>
-<h3 id="Backend组件"><a href="#Backend组件" class="headerlink" title="Backend组件"></a>Backend组件</h3><p>Backend通常使用开源的分布式时序数据库，在本系列教程中并不会实现，但是有兴趣的同学可以参考graphite的whisper组件，是一个通过Python实现的800多行的时序数据库，这规模大小实在是很有让人一探究竟的冲动。</p>
+        <img src="/Blog/2018/08/19/实现下单购买需求的一些思路/815297.png" title="Make Order For Backend Developer">
+<p>对于一名后端工程师来说，实现一些用户下单购买商品的需求是很常见的。最近刚接了一个与购买商品相关的迭代需求，也踩了一些坑，所以跟大家分享一下坑点。<br><a id="more"></a></p>
+<h2 id="服务"><a href="#服务" class="headerlink" title="服务"></a>服务</h2><p>假设现在要下单购买一只哈士奇，那么后端需要提供哪些服务呢？</p>
+<ol>
+<li>处理哈士奇业务逻辑相关的服务，该服务负责校验用户能否购买哈士奇，并最终返回用户一个购买链接。（以下简称哈士奇服务）</li>
+<li>订单服务，在哈士奇服务校验通过之后，哈士奇服务会向订单服务发起一个创建订单的请求，成功以后这份订单会在订单服务中落到数据库。</li>
+<li>支付服务，该服务主要有两个作用，一是根据订单id生成特定的购买链接，二则是提供用户支付的接口。</li>
+</ol>
+<p>哈士奇服务与支付服务比较简单，这里按下不表，重点说一下订单服务，稍微对订单业务有一点了解的朋友都知道，订单服务是一个典型的<strong>状态机服务</strong>。一张订单有多个状态，每当订单状态发生变更的时候，订单服务都会作为一个Producer将状态变更的消息publish到消息队列中，方便Consumer订阅变更消息。</p>
+<p>常见的订单状态如：created(创建)，pay_success(支付成功)，pay_failed(支付失败)，confirmed（业务方确认），refund（退款）。下面通过图1-1表示订单的状态流转：</p>
+<div id="flowchart-0" class="flow-chart"></div>
+
+<center><font size="2" color="gray">图1-1 订单状态流转图</font></center>
+
+
+
+
+<h2 id="场景"><a href="#场景" class="headerlink" title="场景"></a>场景</h2><p>在了解购买一只哈士奇所需要的服务之后，我们来看看如何通过实际场景将这些服务联系起来。</p>
+<h3 id="下单购买"><a href="#下单购买" class="headerlink" title="下单购买"></a>下单购买</h3><p>哈士奇服务（负责业务逻辑）可以说是用户最常打交道的服务，因此用户向哈士奇服务请求生成一条购买链接，整个下单流程可以概括为三个步骤，validate -&gt; make_order -&gt; return_pay_url。流程图如图1-1：</p>
+<div id="flowchart-1" class="flow-chart"></div>
+
+<center><font size="2" color="gray">图2-1 下单购买流程</font></center>
+
+<p>validate主要是哈士奇服务负责的业务逻辑校验，这里通常由业务开发者自己定制，我们重点关注一下make_order和return_pay_url的子过程。</p>
+<h4 id="make-order"><a href="#make-order" class="headerlink" title="make_order"></a>make_order</h4><div id="flowchart-2" class="flow-chart"></div>
+
+<center><font size="2" color="gray">图2-2 创建订单流程</font></center>
+
+<h4 id="return-pay-url"><a href="#return-pay-url" class="headerlink" title="return_pay_url"></a>return_pay_url</h4><p>创建支付链接的流程就非常简单了，如图2-3创建支付链接流程:</p>
+<div id="flowchart-3" class="flow-chart"></div>
+
+<center><font size="2" color="gray">图2-3 创建支付链接流程</font></center>
+
+
+
+<h3 id="支付成功"><a href="#支付成功" class="headerlink" title="支付成功"></a>支付成功</h3><p>当用户从哈士奇服务得到支付链接之后，最常见的操作就是直接支付了，此时用户面对的应该是支付服务的接口。</p>
+<div id="flowchart-4" class="flow-chart"></div>
+
+<center><font size="2" color="gray">图2-4 支付成功流程</font></center>
+
+<p>哈士奇服务通过监听支付成功的消息队列，进行业务逻辑的回调处理。</p>
+<div id="flowchart-5" class="flow-chart"></div>
+
+<center><font size="2" color="gray">图2-5 哈士奇服务处理支付成功订单流程</font></center>
+
+<h4 id="坑点"><a href="#坑点" class="headerlink" title="坑点"></a>坑点</h4><p>虽然上述的哈士奇服务处理支付成功订单的流程非常简单，但是细节的处理也比较多。</p>
+<ol>
+<li>当哈士奇服务收到消息时，一般都通过<strong>消息队列异步</strong>调用自己服务的回调函数，这是因为订单服务的消息不会二次传达消息，超过N分钟没有被confirm的订单则自动被标记为失败。假设哈士奇服务收到消息之后立即处理，但是在提交事务的时候DB抖动导致提交失败，这么订单支付成功的消息就无法被正确消费了，如果之后哈士奇服务没有重试，将导致用户本来支付成功的订单变成支付失败的状态，因此哈士奇服务需要通过异步消息队列确保支付成功的消息被消费。</li>
+<li>即使保证了哈士奇服务能正确处理支付成功的信息，仍然不能保证支付成功的消息在消息队列传输的过程中丢失，因此哈士奇服务需要维护一个<strong>定时补偿脚本</strong>，每隔一段时间就去订单服务中查询是否还有没有被confirm的订单，如果有则进行<strong>补偿处理</strong>。<script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.2.7/raphael.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/flowchart/1.6.5/flowchart.min.js"></script><textarea id="flowchart-0-code" style="display: none">created=>start: 创建（created）
+pay_success=>operation: 支付成功（pay_success）
+not_confirmed?=>condition: 业务方没有confirm超过N分钟？
+pay_failed=>operation: 支付失败（pay_failed）
+can_refund=>condition: 该订单是否能够退款？
+refund=>operation: 退款(refund)
+confirm=>operation: 业务方确认订单完结(confirm)
+
+
+
+created(right)->pay_success->not_confirmed?
+not_confirmed?(yes, right)->pay_failed->can_refund(yes)->refund
+not_confirmed?(no)->confirm</textarea><textarea id="flowchart-0-options" style="display: none">{"scale":1,"line-width":2,"line-length":50,"text-margin":10,"font-size":12}</textarea><script>  var code = document.getElementById("flowchart-0-code").value;  var options = JSON.parse(decodeURIComponent(document.getElementById("flowchart-0-options").value));  var diagram = flowchart.parse(code);  diagram.drawSVG("flowchart-0", options);</script><textarea id="flowchart-1-code" style="display: none">st=>start: 用户想要购买一只哈士奇
+validate=>condition: 用户能否购买哈士奇(validate)
+make_order=>subroutine: 向订单服务发出创建订单的请求(make_order)
+exc=>end: 购买异常，向用户解释原因
+c2=>condition: 创建订单是否成功
+return_pay_url=>subroutine: 使用创建成功的订单ID向支付服务发出生成支付链接的请求(return_pay_url)
+c3=>condition: 生成支付链接是否成功
+pay_success=>end: 后端返回支付链接
+
+st->validate
+validate(yes)->make_order->c2
+validate(no)->exc
+c2(yes)->return_pay_url->c3
+c2(no)->exc
+c3(yes)->pay_success
+c3(no)->exc</textarea><textarea id="flowchart-1-options" style="display: none">{"scale":1,"line-width":2,"line-length":50,"text-margin":10,"font-size":12}</textarea><script>  var code = document.getElementById("flowchart-1-code").value;  var options = JSON.parse(decodeURIComponent(document.getElementById("flowchart-1-options").value));  var diagram = flowchart.parse(code);  diagram.drawSVG("flowchart-1", options);</script><textarea id="flowchart-2-code" style="display: none">make_order=>start: 订单服务收到创建订单的请求
+know_order_type=>operation: 识别订单类型（比如除了哈士奇订单以外可能还有单身狗订单..）
+store_order_detail=>operation: 存储订单的详细细节（比如这笔订单购买了多少只哈士奇）
+session_commit=>condition: 提交事务使订单落库，得到订单ID
+exc=>end: 生成订单异常，反馈给上游服务
+success=>end: 生成订单成功，返回订单ID（订单状态为created）
+
+make_order->know_order_type->store_order_detail->session_commit
+session_commit(yes)->success
+session_commit(no)->exc</textarea><textarea id="flowchart-2-options" style="display: none">{"scale":1,"line-width":2,"line-length":50,"text-margin":10,"font-size":12}</textarea><script>  var code = document.getElementById("flowchart-2-code").value;  var options = JSON.parse(decodeURIComponent(document.getElementById("flowchart-2-options").value));  var diagram = flowchart.parse(code);  diagram.drawSVG("flowchart-2", options);</script><textarea id="flowchart-3-code" style="display: none">return_pay_url=>start: 根据订单ID创建支付链接
+store_detail=>operation: 存储订单ID并生成支付ID
+session_commit=>operation: 提交事务，得到支付ID
+success=>end: 根据支付ID生成支付链接并返回
+
+return_pay_url->store_detail->session_commit->success</textarea><textarea id="flowchart-3-options" style="display: none">{"scale":1,"line-width":2,"line-length":50,"text-margin":10,"font-size":12}</textarea><script>  var code = document.getElementById("flowchart-3-code").value;  var options = JSON.parse(decodeURIComponent(document.getElementById("flowchart-3-options").value));  var diagram = flowchart.parse(code);  diagram.drawSVG("flowchart-3", options);</script><textarea id="flowchart-4-code" style="display: none">pay_success=>start: 用户支付成功
+notify_order=>operation: 支付服务通知订单服务支付成功
+change_status=>operation: 订单服务更改订单状态
+publish=>end: 订单通过消息队列发布订单支付成功的消息
+
+
+pay_success->notify_order->change_status->publish</textarea><textarea id="flowchart-4-options" style="display: none">{"scale":1,"line-width":2,"line-length":50,"text-margin":10,"font-size":12}</textarea><script>  var code = document.getElementById("flowchart-4-code").value;  var options = JSON.parse(decodeURIComponent(document.getElementById("flowchart-4-options").value));  var diagram = flowchart.parse(code);  diagram.drawSVG("flowchart-4", options);</script><textarea id="flowchart-5-code" style="display: none">get_success_order=>start: 监听得到支付成功的订单
+process_order=>operation: 将支付成功的订单ID落库，并执行对应的业务逻辑（比如将用户的购买记录落库）
+confirm=>end: 向订单服务确认订单完结
+
+get_success_order->process_order->confirm</textarea><textarea id="flowchart-5-options" style="display: none">{"scale":1,"line-width":2,"line-length":50,"text-margin":10,"font-size":12}</textarea><script>  var code = document.getElementById("flowchart-5-code").value;  var options = JSON.parse(decodeURIComponent(document.getElementById("flowchart-5-options").value));  var diagram = flowchart.parse(code);  diagram.drawSVG("flowchart-5", options);</script></li>
+</ol>
 
       
     </div>
@@ -541,7 +601,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="https://zifenghuang1.github.io/Blog/2018/08/06/用Python实现StatsD-Server（一）：蓝图/" title="用Python实现StatsD Server（一）：蓝图">https://zifenghuang1.github.io/Blog/2018/08/06/用Python实现StatsD-Server（一）：蓝图/</a>
+    <a href="https://zifenghuang1.github.io/Blog/2018/08/19/实现下单购买需求的一些思路/" title="实现下单购买需求的一些思路">https://zifenghuang1.github.io/Blog/2018/08/19/实现下单购买需求的一些思路/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>
@@ -556,9 +616,9 @@
       
         <div class="post-tags">
           
-            <a href="/Blog/tags/Python/" rel="tag"># Python</a>
+            <a href="/Blog/tags/business/" rel="tag"># business</a>
           
-            <a href="/Blog/tags/StatsD/" rel="tag"># StatsD</a>
+            <a href="/Blog/tags/backend/" rel="tag"># backend</a>
           
         </div>
       
@@ -571,8 +631,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/Blog/2018/05/31/Programing-Languages-Part-A-Note（一）：工欲善其事，必先利其器/" rel="next" title="Programing Languages Part A Note（一）：工欲善其事，必先利其器">
-                <i class="fa fa-chevron-left"></i> Programing Languages Part A Note（一）：工欲善其事，必先利其器
+              <a href="/Blog/2018/08/06/用Python实现StatsD-Server（一）：蓝图/" rel="next" title="用Python实现StatsD Server（一）：蓝图">
+                <i class="fa fa-chevron-left"></i> 用Python实现StatsD Server（一）：蓝图
               </a>
             
           </div>
@@ -580,10 +640,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/Blog/2018/08/19/实现下单购买需求的一些思路/" rel="prev" title="实现下单购买需求的一些思路">
-                实现下单购买需求的一些思路 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -747,7 +803,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#组件关系"><span class="nav-number">1.</span> <span class="nav-text">组件关系</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Client组件"><span class="nav-number">1.1.</span> <span class="nav-text">Client组件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#指标函数"><span class="nav-number">1.1.1.</span> <span class="nav-text">指标函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#两个协议"><span class="nav-number">1.1.2.</span> <span class="nav-text">两个协议</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Server-组件"><span class="nav-number">1.2.</span> <span class="nav-text">Server 组件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#基本功能"><span class="nav-number">1.2.1.</span> <span class="nav-text">基本功能</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#协议交互"><span class="nav-number">1.2.2.</span> <span class="nav-text">协议交互</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Backend组件"><span class="nav-number">1.3.</span> <span class="nav-text">Backend组件</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#服务"><span class="nav-number">1.</span> <span class="nav-text">服务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#场景"><span class="nav-number">2.</span> <span class="nav-text">场景</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#下单购买"><span class="nav-number">2.1.</span> <span class="nav-text">下单购买</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#make-order"><span class="nav-number">2.1.1.</span> <span class="nav-text">make_order</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#return-pay-url"><span class="nav-number">2.1.2.</span> <span class="nav-text">return_pay_url</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#支付成功"><span class="nav-number">2.2.</span> <span class="nav-text">支付成功</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#坑点"><span class="nav-number">2.2.1.</span> <span class="nav-text">坑点</span></a></li></ol></li></ol></li></ol></div>
             
 
           </div>
@@ -931,9 +987,9 @@
     
       <script type="text/javascript">
         var disqus_config = function () {
-          this.page.url = 'https://zifenghuang1.github.io/Blog/2018/08/06/用Python实现StatsD-Server（一）：蓝图/';
-          this.page.identifier = '2018/08/06/用Python实现StatsD-Server（一）：蓝图/';
-          this.page.title = '用Python实现StatsD Server（一）：蓝图';
+          this.page.url = 'https://zifenghuang1.github.io/Blog/2018/08/19/实现下单购买需求的一些思路/';
+          this.page.identifier = '2018/08/19/实现下单购买需求的一些思路/';
+          this.page.title = '实现下单购买需求的一些思路';
         };
         var d = document, s = d.createElement('script');
         s.src = 'https://crazyleaves.disqus.com/embed.js';
